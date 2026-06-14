@@ -1,0 +1,1276 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Purp Digital | Yaratıcı Ajans & Yapay Zeka Otomasyonu</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300&display=swap" rel="stylesheet">
+
+  <style>
+    /* ─── Design Tokens ─── */
+    :root {
+      --purple:     #111111;
+      --purple-dim: rgba(17, 17, 17, 0.12);
+      --gold:       #ffb900;
+      --gold-dim:   rgba(255, 185, 0, 0.15);
+      --dark:       #0a0a0a;
+      --dark-mid:   #141414;
+      --white:      #ffffff;
+      --white-60:   rgba(255,255,255,0.60);
+      --white-35:   rgba(255,255,255,0.35);
+      --black:      #000000;
+
+      --font:       'Plus Jakarta Sans', system-ui, sans-serif;
+      --ease-out:   cubic-bezier(0.16, 1, 0.3, 1);
+      --transition: 220ms var(--ease-out);
+    }
+
+    /* ─── Reset ─── */
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html {
+      scroll-behavior: smooth;
+      overflow-x: hidden;
+    }
+
+    body {
+      font-family: var(--font);
+      background: var(--dark);
+      color: var(--white);
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ─── Reduced Motion ─── */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+      .reveal { opacity: 1 !important; transform: none !important; }
+    }
+
+    /* ─── Focus ─── */
+    :focus-visible {
+      outline: 2px solid var(--gold);
+      outline-offset: 3px;
+    }
+
+    /* ─── Skip Link ─── */
+    .skip-link {
+      position: absolute;
+      top: -100%;
+      left: 1rem;
+      background: var(--gold);
+      color: var(--black);
+      padding: 0.5rem 1rem;
+      font-weight: 700;
+      font-size: 0.875rem;
+      border-radius: 0 0 6px 6px;
+      z-index: 999;
+      transition: top 0.2s;
+    }
+    .skip-link:focus { top: 0; }
+
+    /* ─── Reveal animation ─── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity 0.75s var(--ease-out), transform 0.75s var(--ease-out);
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: none;
+    }
+    .reveal-delay-1 { transition-delay: 0.08s; }
+    .reveal-delay-2 { transition-delay: 0.16s; }
+    .reveal-delay-3 { transition-delay: 0.24s; }
+    .reveal-delay-4 { transition-delay: 0.32s; }
+
+    /* ─── Ambient glow ─── */
+    .glow {
+      position: absolute;
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 0;
+      filter: blur(120px);
+    }
+    .glow-1 {
+      width: 700px; height: 700px;
+      background: radial-gradient(circle, rgba(17,17,17,0.45), transparent 70%);
+      top: -160px; right: -180px;
+    }
+    .glow-2 {
+      width: 400px; height: 400px;
+      background: radial-gradient(circle, rgba(255,185,0,0.08), transparent 70%);
+      bottom: 80px; left: -80px;
+    }
+
+    /* ══════════════════════════════
+       NAVBAR
+    ══════════════════════════════ */
+    .navbar {
+      position: fixed;
+      top: 0;
+      inset-inline: 0;
+      z-index: 100;
+      padding: 0 clamp(1.5rem, 5vw, 5rem);
+      height: 68px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(11, 0, 19, 0.72);
+      -webkit-backdrop-filter: blur(16px);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      transition: background var(--transition);
+    }
+
+    /* Logo */
+    .logo {
+      display: flex;
+      align-items: center;
+      text-decoration: none;
+      line-height: 0;
+    }
+    .logo img {
+      height: 90px;
+      width: auto;
+      display: block;
+    }
+
+    /* Desktop nav links */
+    .nav-links {
+      display: flex;
+      list-style: none;
+      gap: 2.5rem;
+    }
+    .nav-links a {
+      color: var(--white-60);
+      text-decoration: none;
+      font-size: 0.875rem;
+      font-weight: 500;
+      transition: color var(--transition);
+      cursor: pointer;
+    }
+    .nav-links a:hover { color: var(--white); }
+
+    /* CTA button */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.55rem 1.35rem;
+      border-radius: 100px;
+      font-family: var(--font);
+      font-size: 0.875rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background var(--transition), color var(--transition),
+                  box-shadow var(--transition), border-color var(--transition);
+      text-decoration: none;
+      border: none;
+    }
+    .btn-outline {
+      border: 1.5px solid rgba(255,185,0,0.6);
+      color: var(--gold);
+      background: transparent;
+    }
+    .btn-outline:hover {
+      background: var(--gold);
+      color: var(--black);
+      border-color: var(--gold);
+      box-shadow: 0 0 20px rgba(255,185,0,0.35);
+    }
+    .btn-solid {
+      background: var(--purple);
+      color: var(--white);
+      border: 1.5px solid transparent;
+    }
+    .btn-solid:hover {
+      background: #2a2a2a;
+      box-shadow: 0 8px 24px rgba(17,17,17,0.5);
+    }
+    .btn-gold {
+      background: var(--gold);
+      color: var(--black);
+      border: 1.5px solid transparent;
+    }
+    .btn-gold:hover {
+      background: #ffc422;
+      box-shadow: 0 8px 20px rgba(255,185,0,0.4);
+    }
+
+    /* Hamburger */
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      width: 36px; height: 36px;
+      align-items: center;
+      justify-content: center;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 4px;
+      border-radius: 6px;
+    }
+    .hamburger span {
+      display: block;
+      width: 22px; height: 2px;
+      background: var(--white);
+      border-radius: 2px;
+      transition: transform 0.3s var(--ease-out), opacity 0.2s;
+    }
+    .hamburger[aria-expanded="true"] span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    .hamburger[aria-expanded="true"] span:nth-child(2) { opacity: 0; }
+    .hamburger[aria-expanded="true"] span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+    /* Mobile menu overlay */
+    .mobile-menu {
+      position: fixed;
+      inset: 0;
+      z-index: 99;
+      background: var(--dark-mid);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: clamp(2rem, 6vw, 4rem);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s var(--ease-out);
+    }
+    .mobile-menu.open { opacity: 1; pointer-events: all; }
+    .mobile-menu nav ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+    .mobile-menu nav ul a {
+      display: block;
+      font-size: clamp(2.4rem, 7vw, 4.5rem);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      color: var(--white);
+      text-decoration: none;
+      transition: color var(--transition);
+      line-height: 1.1;
+    }
+    .mobile-menu nav ul a:hover { color: var(--gold); }
+    .mobile-menu-footer {
+      margin-top: auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .mobile-menu-footer p {
+      font-size: 0.75rem;
+      color: var(--white-35);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+    }
+
+    /* Responsive nav */
+    @media (max-width: 768px) {
+      .nav-links, .nav-cta { display: none; }
+      .hamburger { display: flex; }
+    }
+
+    /* ══════════════════════════════
+       HERO
+    ══════════════════════════════ */
+    .hero {
+      position: relative;
+      min-height: 100svh;
+      display: flex;
+      align-items: center;
+      padding: 0 clamp(1.5rem, 5vw, 5rem);
+      padding-top: 68px;
+      overflow: hidden;
+    }
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+    }
+    .hero-bg img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+      display: block;
+    }
+    .hero-bg::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to right, rgba(10,10,10,1) 0%, rgba(10,10,10,0.85) 30%, rgba(10,10,10,0.15) 65%, transparent 100%);
+    }
+    .hero-inner {
+      position: relative;
+      z-index: 1;
+      max-width: 800px;
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: var(--gold-dim);
+      border: 1px solid rgba(255,185,0,0.25);
+      color: var(--gold);
+      padding: 0.35rem 0.9rem;
+      border-radius: 100px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      margin-bottom: 1.75rem;
+    }
+    .badge-dot {
+      display: inline-block;
+      width: 6px; height: 6px;
+      background: var(--gold);
+      border-radius: 50%;
+    }
+    .hero h1 {
+      font-size: clamp(2.8rem, 6.5vw, 5.5rem);
+      font-weight: 800;
+      line-height: 1.08;
+      letter-spacing: -0.04em;
+      margin-bottom: 1.5rem;
+      color: var(--white);
+    }
+    @property --sw-x {
+      syntax: '<percentage>';
+      initial-value: -5%;
+      inherits: false;
+    }
+
+    .accent-scramble {
+      display: inline-block;
+      padding: 0.3em 0.1em;
+      margin: -0.3em -0.1em;
+      background: linear-gradient(
+        75deg,
+        #ffb900 0%,
+        #ffb900 calc(var(--sw-x) - 4%),
+        #ffffff calc(var(--sw-x) - 0.5%),
+        #ffffff calc(var(--sw-x) + 6.5%),
+        #ffb900 calc(var(--sw-x) + 10%),
+        #ffb900 100%
+      );
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: sw-line 5.5s ease-in-out infinite;
+    }
+    @keyframes sw-line {
+      0%   { --sw-x: -5%; }
+      45%  { --sw-x: 105%; }
+      100% { --sw-x: 105%; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .accent-scramble {
+        background: none;
+        -webkit-text-fill-color: #ffb900;
+        padding: 0; margin: 0;
+        animation: none;
+      }
+    }
+
+    /* ── Magnetic button ── */
+    .btn {
+      will-change: transform;
+    }
+    .btn .btn-inner {
+      display: inline-block;
+      transition: transform 0.1s;
+    }
+    .hero-desc {
+      font-size: clamp(1rem, 1.5vw, 1.125rem);
+      color: var(--white-60);
+      line-height: 1.75;
+      max-width: 520px;
+      margin-bottom: 2.5rem;
+      font-weight: 400;
+    }
+    .hero-cta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.875rem;
+      align-items: center;
+    }
+    .hero-cta .btn { font-size: 0.9375rem; padding: 0.75rem 1.75rem; }
+
+    /* ── Hero visual ── */
+    .hero-visual {
+      width: 100%;
+      max-width: 900px;
+      margin-top: clamp(3rem, 6vw, 5rem);
+      position: relative;
+      z-index: 1;
+    }
+    .hero-visual img {
+      width: 100%;
+      height: auto;
+      display: block;
+      border-radius: 20px;
+      box-shadow: 0 40px 100px rgba(17,17,17,0.45), 0 0 0 1px rgba(255,185,0,0.08);
+    }
+
+    /* ── Stats strip ── */
+    .stats-strip {
+      position: relative;
+      z-index: 1;
+      margin-top: clamp(3rem, 6vw, 5rem);
+      display: flex;
+      flex-wrap: wrap;
+      gap: clamp(2rem, 4vw, 4rem);
+    }
+    .stat-item { display: flex; flex-direction: column; gap: 0.25rem; }
+    .stat-num {
+      font-size: clamp(2rem, 3.5vw, 2.75rem);
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      color: var(--white);
+    }
+    .stat-num span { color: var(--gold); }
+    .stat-label {
+      font-size: 0.8125rem;
+      color: var(--white-35);
+      font-weight: 500;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    /* ══════════════════════════════
+       SERVICES
+    ══════════════════════════════ */
+    .services {
+      background: #ffffff;
+      padding: clamp(5rem, 10vw, 9rem) clamp(1.5rem, 5vw, 5rem);
+      position: relative;
+      overflow: hidden;
+      text-align: center;
+    }
+    .section-label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+    }
+    .services .section-label { color: var(--purple); }
+    .section-title {
+      font-size: clamp(2rem, 4vw, 3.25rem);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1.12;
+      margin-bottom: 1rem;
+    }
+    .services .section-title { color: #0a0a0a; }
+    .services .section-sub {
+      font-size: 1rem;
+      color: rgba(0,0,0,0.55);
+      max-width: 46ch;
+      line-height: 1.72;
+      margin-bottom: clamp(3rem, 6vw, 5rem);
+      margin-inline: auto;
+    }
+
+    /* Cards grid */
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(min(260px, 100%), 1fr));
+      gap: 1.5rem;
+      max-width: 1200px;
+      margin-inline: auto;
+    }
+    .service-card {
+      background: var(--purple);
+      border-radius: 20px;
+      padding: clamp(1.75rem, 3vw, 2.5rem);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 1.25rem;
+      border: 1px solid rgba(255,255,255,0.06);
+      transition: transform 0.45s cubic-bezier(0.16,1,0.3,1),
+                  box-shadow 0.45s cubic-bezier(0.16,1,0.3,1),
+                  border-color 0.45s cubic-bezier(0.16,1,0.3,1),
+                  background 0.45s ease;
+      cursor: default;
+      position: relative;
+      overflow: hidden;
+    }
+    /* Glow sweep on hover */
+    .service-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 50% 0%, rgba(255,185,0,0.12) 0%, transparent 70%);
+      opacity: 0;
+      transition: opacity 0.5s ease;
+      pointer-events: none;
+    }
+    .service-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 28px 56px rgba(0,0,0,0.45), 0 0 0 1px rgba(255,185,0,0.35);
+      border-color: rgba(255,185,0,0.35);
+      background: #1a1a1a;
+    }
+    .service-card:hover::before { opacity: 1; }
+
+    .service-icon {
+      width: 52px; height: 52px;
+      border-radius: 14px;
+      background: var(--gold-dim);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: background 0.4s ease, transform 0.45s cubic-bezier(0.16,1,0.3,1);
+    }
+    .service-card:hover .service-icon {
+      background: rgba(255,185,0,0.22);
+      transform: scale(1.15) rotate(-6deg);
+    }
+    .service-icon svg { width: 24px; height: 24px; stroke: var(--gold); fill: none; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; }
+
+    .service-card h3 {
+      font-size: 1.125rem;
+      font-weight: 700;
+      color: var(--white);
+      letter-spacing: -0.01em;
+      transition: color 0.3s ease;
+    }
+    .service-card:hover h3 { color: #fff; }
+
+    .service-card p {
+      font-size: 0.9rem;
+      color: rgba(255,255,255,0.70);
+      line-height: 1.72;
+      flex: 1;
+      transition: color 0.3s ease;
+    }
+    .service-card:hover p { color: rgba(255,255,255,0.85); }
+
+    .service-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-top: auto;
+      transition: gap 0.4s cubic-bezier(0.16,1,0.3,1), opacity 0.3s ease;
+      opacity: 0.6;
+    }
+    .service-card:hover .service-tag {
+      gap: 0.75rem;
+      opacity: 1;
+    }
+    .service-tag::before,
+    .service-tag::after {
+      content: '';
+      display: inline-block;
+      width: 14px; height: 1px;
+      background: var(--gold);
+      transition: width 0.4s cubic-bezier(0.16,1,0.3,1);
+    }
+    .service-card:hover .service-tag::before,
+    .service-card:hover .service-tag::after { width: 22px; }
+
+    /* ══════════════════════════════
+       PROCESS
+    ══════════════════════════════ */
+    .process {
+      padding: clamp(5rem, 10vw, 9rem) clamp(1.5rem, 5vw, 5rem);
+      background: var(--dark-mid);
+      position: relative;
+      overflow: hidden;
+    }
+    .process-bg-img {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0.12;
+    }
+    .process-bg-img img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+      display: block;
+    }
+    .process .section-label { color: var(--gold); }
+    .process .section-title { color: var(--white); }
+    .process .section-sub {
+      font-size: 1rem;
+      color: var(--white-60);
+      max-width: 46ch;
+      line-height: 1.72;
+      margin-bottom: clamp(3rem, 6vw, 5rem);
+    }
+    .process-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(min(240px, 100%), 1fr));
+      gap: 1.25rem;
+    }
+    .process-item {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 20px;
+      padding: clamp(1.75rem, 3vw, 2.25rem);
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.4s ease, background 0.4s ease, transform 0.4s cubic-bezier(0.16,1,0.3,1), box-shadow 0.4s ease;
+    }
+    .process-item::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: var(--item-color, var(--gold));
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.4s cubic-bezier(0.16,1,0.3,1);
+      border-radius: 20px 20px 0 0;
+    }
+    .process-item:hover {
+      border-color: rgba(255,255,255,0.14);
+      background: rgba(255,255,255,0.055);
+      transform: translateY(-6px);
+      box-shadow: 0 24px 48px rgba(0,0,0,0.4);
+    }
+    .process-item:hover::before { transform: scaleX(1); }
+
+    .process-icon {
+      width: 52px; height: 52px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--item-bg, rgba(255,185,0,0.1));
+      transition: background 0.4s ease, transform 0.4s cubic-bezier(0.16,1,0.3,1);
+    }
+    .process-item:hover .process-icon {
+      background: var(--item-bg-hover, rgba(255,185,0,0.2));
+      transform: scale(1.1) rotate(-5deg);
+    }
+    .process-icon svg {
+      width: 24px; height: 24px;
+      stroke: var(--item-color, var(--gold));
+      fill: none; stroke-width: 1.75;
+      stroke-linecap: round; stroke-linejoin: round;
+    }
+    .process-num {
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      color: var(--item-color, var(--gold));
+      text-transform: uppercase;
+    }
+    .process-item h3 {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--white);
+      letter-spacing: -0.01em;
+      line-height: 1.3;
+    }
+    .process-item p {
+      font-size: 0.875rem;
+      color: var(--white-60);
+      line-height: 1.75;
+    }
+    /* Adım renkleri */
+    .process-item:nth-child(1) { --item-color: #ffb900; --item-bg: rgba(255,185,0,0.1); --item-bg-hover: rgba(255,185,0,0.2); }
+    .process-item:nth-child(2) { --item-color: #a78bfa; --item-bg: rgba(167,139,250,0.1); --item-bg-hover: rgba(167,139,250,0.2); }
+    .process-item:nth-child(3) { --item-color: #34d399; --item-bg: rgba(52,211,153,0.1); --item-bg-hover: rgba(52,211,153,0.2); }
+    .process-item:nth-child(4) { --item-color: #60a5fa; --item-bg: rgba(96,165,250,0.1); --item-bg-hover: rgba(96,165,250,0.2); }
+
+    /* ══════════════════════════════
+       CTA
+    ══════════════════════════════ */
+    .cta-section {
+      padding: clamp(5rem, 10vw, 9rem) clamp(1.5rem, 5vw, 5rem);
+      background: var(--dark);
+      position: relative;
+      overflow: hidden;
+      text-align: center;
+    }
+    .cta-section .glow {
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      width: 700px; height: 400px;
+      background: radial-gradient(ellipse, rgba(17,17,17,0.5), transparent 70%);
+    }
+    .cta-inner {
+      position: relative;
+      z-index: 1;
+      max-width: 680px;
+      margin: 0 auto;
+    }
+    .cta-inner .section-label { color: var(--gold); margin-bottom: 1.25rem; }
+    .cta-inner h2 {
+      font-size: clamp(2.2rem, 5vw, 4rem);
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      line-height: 1.1;
+      color: var(--white);
+      margin-bottom: 1.25rem;
+    }
+    .cta-inner h2 span { color: var(--gold); }
+    .cta-inner p {
+      font-size: 1.0625rem;
+      color: var(--white-60);
+      line-height: 1.7;
+      margin-bottom: 2.5rem;
+      max-width: 42ch;
+      margin-inline: auto;
+    }
+    .cta-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.875rem;
+      justify-content: center;
+    }
+    .cta-group .btn { font-size: 1rem; padding: 0.875rem 2rem; }
+    .cta-email {
+      display: block;
+      font-size: 0.85rem;
+      color: var(--white-35);
+      margin-top: 1.25rem;
+      letter-spacing: 0.04em;
+    }
+    .cta-email a {
+      color: var(--white-60);
+      text-decoration: none;
+      transition: color var(--transition);
+    }
+    .cta-email a:hover { color: var(--gold); }
+
+    /* ══════════════════════════════
+       FOOTER
+    ══════════════════════════════ */
+    footer {
+      position: relative;
+      overflow: hidden;
+      border-top: 1px solid rgba(255,255,255,0.06);
+    }
+    .footer-bg {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+    }
+    .footer-bg img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+      display: block;
+      opacity: 0.08;
+    }
+    .footer-bg::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: rgba(10,10,10,0.72);
+    }
+
+    /* Üst bölüm — logo + slogan */
+    .footer-top {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      padding: clamp(4rem, 8vw, 7rem) clamp(1.5rem, 5vw, 5rem) clamp(2.5rem, 4vw, 3.5rem);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    .footer-logo {
+      display: flex;
+      align-items: center;
+      text-decoration: none;
+      line-height: 0;
+      margin-bottom: 1.5rem;
+    }
+    .footer-tagline {
+      font-size: clamp(0.9rem, 1.2vw, 1.0625rem);
+      color: var(--white-60);
+      max-width: 38ch;
+      line-height: 1.7;
+      margin-bottom: 2rem;
+    }
+    .footer-contact-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      justify-content: center;
+    }
+    .footer-contact-row a {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--white-60);
+      text-decoration: none;
+      padding: 0.5rem 1.1rem;
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 100px;
+      transition: color var(--transition), border-color var(--transition), background var(--transition);
+    }
+    .footer-contact-row a:hover {
+      color: var(--gold);
+      border-color: rgba(255,185,0,0.4);
+      background: rgba(255,185,0,0.06);
+    }
+
+    /* Alt bölüm — nav + copyright */
+    .footer-bottom {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1.25rem;
+      padding: 1.5rem clamp(1.5rem, 5vw, 5rem);
+    }
+    .footer-copy {
+      font-size: 0.8rem;
+      color: var(--white-35);
+    }
+    .footer-links {
+      display: flex;
+      gap: 1.5rem;
+      list-style: none;
+      flex-wrap: wrap;
+    }
+    .footer-links a {
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: var(--white-35);
+      text-decoration: none;
+      transition: color var(--transition);
+      cursor: pointer;
+    }
+    .footer-links a:hover { color: var(--white-60); }
+    .footer-socials {
+      display: flex;
+      gap: 0.75rem;
+    }
+    .footer-socials a {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      border: 1px solid rgba(255,255,255,0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: var(--white-60);
+      letter-spacing: 0.05em;
+      transition: color var(--transition), border-color var(--transition), background var(--transition);
+    }
+    .footer-socials a:hover {
+      color: var(--gold);
+      border-color: rgba(255,185,0,0.4);
+      background: rgba(255,185,0,0.06);
+    }
+
+    @media (max-width: 600px) {
+      .footer-bottom { flex-direction: column; align-items: flex-start; }
+    }
+
+    /* ══════════════════════════════
+       SVG Icon helper
+    ══════════════════════════════ */
+    .icon-monitor path, .icon-monitor rect, .icon-monitor polyline { stroke: var(--gold); }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#main">Ana içeriğe geç</a>
+
+  <!-- ─── Navbar ─── -->
+  <header class="navbar" role="banner">
+    <a href="#" class="logo" aria-label="Purp Digital — Ana Sayfa">
+      <img src="PURP-LOGO.png" alt="Purp Digital">
+    </a>
+
+    <nav aria-label="Ana navigasyon">
+      <ul class="nav-links">
+        <li><a href="#services">Hizmetler</a></li>
+        <li><a href="#process">Süreç</a></li>
+        <li><a href="#contact">İletişim</a></li>
+      </ul>
+    </nav>
+
+    <a href="#contact" class="btn btn-outline nav-cta">Proje Başlat</a>
+
+    <button
+      class="hamburger"
+      aria-label="Navigasyon menüsünü aç"
+      aria-expanded="false"
+      aria-controls="mobile-menu"
+    >
+      <span></span><span></span><span></span>
+    </button>
+  </header>
+
+  <!-- ─── Mobile menu ─── -->
+  <div id="mobile-menu" class="mobile-menu" role="dialog" aria-modal="true" aria-label="Navigasyon menüsü">
+    <nav aria-label="Mobil navigasyon">
+      <ul>
+        <li><a href="#services">Hizmetler</a></li>
+        <li><a href="#process">Süreç</a></li>
+        <li><a href="#contact">İletişim</a></li>
+      </ul>
+    </nav>
+    <div class="mobile-menu-footer">
+      <p>© 2026 Purp Digital</p>
+      <p style="color: var(--gold); letter-spacing: 0.15em; font-size: 0.75rem; text-transform: uppercase; font-weight: 600;">İstanbul, TR</p>
+    </div>
+  </div>
+
+  <!-- ─── Main ─── -->
+  <main id="main">
+
+    <!-- Hero -->
+    <section class="hero" aria-label="Anasayfa">
+      <div class="hero-bg" aria-hidden="true">
+        <img src="newhero.png" alt="">
+      </div>
+      <div class="glow glow-1" aria-hidden="true"></div>
+      <div class="glow glow-2" aria-hidden="true"></div>
+
+      <div class="hero-inner">
+        <p class="badge reveal"><span class="badge-dot" aria-hidden="true"></span> Next-Gen Dijital Ajans</p>
+
+        <h1 class="reveal reveal-delay-1">
+          Fikirleri Estetiğe,<br>
+          Süreçleri <span class="accent-scramble" aria-label="Geleceğe">Geleceğe</span><br>
+          Dönüştürür.
+        </h1>
+
+        <p class="hero-desc reveal reveal-delay-2">
+          Purp Digital olarak kurumsal kimliğinizi baştan yaratıyor, geleceğin
+          web teknolojilerini yapay zeka otomasyonları ve kusursuz sosyal medya
+          yönetimiyle harmanlıyoruz.
+        </p>
+
+        <div class="hero-cta reveal reveal-delay-3">
+          <a href="#services" class="btn btn-solid magnetic"><span class="btn-inner">Hizmetleri Keşfet</span></a>
+          <a href="#contact" class="btn btn-outline magnetic"><span class="btn-inner">Proje Başlat ↗</span></a>
+        </div>
+
+        <div class="stats-strip reveal reveal-delay-4" aria-label="İstatistikler">
+          <div class="stat-item">
+            <span class="stat-num">80<span>+</span></span>
+            <span class="stat-label">Tamamlanan Proje</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-num">5<span>★</span></span>
+            <span class="stat-label">Müşteri Memnuniyeti</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-num">3<span>x</span></span>
+            <span class="stat-label">Dönüşüm Artışı</span>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Services -->
+    <section class="services" id="services" aria-label="Hizmetlerimiz">
+      <p class="section-label reveal">Neler Yapıyoruz</p>
+      <h2 class="section-title reveal reveal-delay-1">
+        Sınırları Zorlayan<br>Dijital Çözümler
+      </h2>
+      <p class="section-sub reveal reveal-delay-2">
+        Markanızı dijital dünyada kalıcı kılmak için strateji, yaratıcılık ve
+        yapay zekayı bir araya getiriyoruz.
+      </p>
+
+      <div class="services-grid">
+        <!-- Web Tasarım -->
+        <article class="service-card reveal">
+          <div class="service-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+              <line x1="3" y1="9" x2="21" y2="9"/>
+              <line x1="9" y1="21" x2="9" y2="9"/>
+            </svg>
+          </div>
+          <h3>Web Tasarım</h3>
+          <p>Kullanıcı deneyimi odaklı, modern, hızlı ve tüm cihazlarda kusursuz çalışan kreatif web siteleri tasarlıyor ve kodluyoruz.</p>
+          <span class="service-tag">Keşfet</span>
+        </article>
+
+        <!-- Yapay Zeka -->
+        <article class="service-card reveal reveal-delay-1">
+          <div class="service-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <circle cx="12" cy="12" r="3"/>
+              <path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/>
+            </svg>
+          </div>
+          <h3>Yapay Zeka Otomasyon</h3>
+          <p>İş süreçlerinizi hızlandıracak akıllı yapay zeka entegrasyonları, botlar ve iş akışı otomasyonları geliştiriyoruz.</p>
+          <span class="service-tag">Keşfet</span>
+        </article>
+
+        <!-- Sosyal Medya -->
+        <article class="service-card reveal reveal-delay-2">
+          <div class="service-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"/>
+            </svg>
+          </div>
+          <h3>Sosyal Medya Yönetimi</h3>
+          <p>Markanızın dijital sesini büyütüyor; stratejik içerik planlaması, estetik tasarımlar ve aktif topluluk yönetimi sunuyoruz.</p>
+          <span class="service-tag">Keşfet</span>
+        </article>
+
+        <!-- Kurumsal Kimlik -->
+        <article class="service-card reveal reveal-delay-3">
+          <div class="service-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+            </svg>
+          </div>
+          <h3>Kurumsal Kimlik</h3>
+          <p>Logo tasarımından marka rehberine kadar, şirketinizin karakterini ve vizyonunu yansıtan akılda kalıcı kimlikler inşa ediyoruz.</p>
+          <span class="service-tag">Keşfet</span>
+        </article>
+      </div>
+    </section>
+
+    <!-- Process -->
+    <section class="process" id="process" aria-label="Çalışma Sürecimiz">
+      <div class="glow glow-1" aria-hidden="true"></div>
+
+      <!-- Arka plan görseli -->
+      <div class="process-bg-img" aria-hidden="true">
+        <img src="çalışma.png" alt="">
+      </div>
+
+      <p class="section-label reveal">Çalışma Sürecimiz</p>
+      <h2 class="section-title reveal reveal-delay-1">4 Adımda<br>Hayalinizdeki Proje</h2>
+      <p class="section-sub reveal reveal-delay-2">
+        Şeffaf, hızlı ve sonuç odaklı bir süreçle projenizi hayata geçiriyoruz.
+      </p>
+
+      <div class="process-grid" role="list">
+
+        <div class="process-item reveal" role="listitem">
+          <div class="process-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          </div>
+          <p class="process-num">01 — Keşif</p>
+          <h3>Dinliyoruz & Anlıyoruz</h3>
+          <p>İhtiyaçlarınızı, hedeflerinizi ve markanızın ruhunu derinlemesine anlamak için kapsamlı bir brifing süreci yürütüyoruz.</p>
+        </div>
+
+        <div class="process-item reveal reveal-delay-1" role="listitem">
+          <div class="process-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          </div>
+          <p class="process-num">02 — Strateji</p>
+          <h3>Planlıyoruz & Tasarlıyoruz</h3>
+          <p>Veriye dayalı stratejiler ve yaratıcı konseptlerle projenizin yol haritasını çiziyoruz.</p>
+        </div>
+
+        <div class="process-item reveal reveal-delay-2" role="listitem">
+          <div class="process-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+          </div>
+          <p class="process-num">03 — Üretim</p>
+          <h3>Geliştiriyoruz & Uyguluyoruz</h3>
+          <p>Piksel mükemmeliyeti ve performansı ön planda tutarak projenizi en güncel teknolojilerle hayata geçiriyor, her detayı titizlikle uyguluyoruz.</p>
+        </div>
+
+        <div class="process-item reveal reveal-delay-3" role="listitem">
+          <div class="process-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          </div>
+          <p class="process-num">04 — Teslimat</p>
+          <h3>Teslim ediyoruz & Büyütüyoruz</h3>
+          <p>Projenizi teslim ettikten sonra analitik takip ve sürekli iyileştirmeyle büyümenizi destekliyoruz.</p>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta-section" id="contact" aria-label="İletişim">
+      <div class="glow" aria-hidden="true"></div>
+      <div class="cta-inner">
+        <p class="section-label reveal">Haydi Başlayalım</p>
+        <h2 class="reveal reveal-delay-1">Sanal'ı Gerçeğe<br><span>Dönüştürelim</span></h2>
+        <p class="reveal reveal-delay-2">
+          Projeniz için hazır mısınız? Ücretsiz danışmanlık görüşmesi için
+          bize ulaşın, hedeflerinizi birlikte konuşalım.
+        </p>
+        <div class="cta-group reveal reveal-delay-3">
+          <a href="mailto:hello@purp.digital" class="btn btn-gold magnetic">
+            <span class="btn-inner">E-posta Gönder ↗</span>
+          </a>
+          <a href="tel:+902161234567" class="btn btn-outline magnetic">
+            <span class="btn-inner">Hemen Ara</span>
+          </a>
+        </div>
+        <p class="cta-email reveal reveal-delay-4">
+          veya doğrudan yazın:
+          <a href="mailto:hello@purp.digital">hello@purp.digital</a>
+        </p>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ─── Footer ─── -->
+  <footer role="contentinfo">
+    <div class="footer-bg" aria-hidden="true">
+      <img src="newhero.png" alt="">
+    </div>
+
+    <!-- Üst alan: logo + slogan + iletişim -->
+    <div class="footer-top">
+      <a href="#" class="footer-logo" aria-label="Purp Digital — Ana Sayfa">
+        <img src="PURP-LOGO.png" alt="Purp Digital" style="height:120px; width:auto; filter:brightness(0) invert(1);">
+      </a>
+      <p class="footer-tagline">Fikirleri estetiğe, süreçleri geleceğe dönüştürüyoruz. Her projede özgün kimlik, her adımda stratejik düşünce.</p>
+      <div class="footer-contact-row">
+        <a href="mailto:info@purpdigital.com">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><polyline points="2,4 12,13 22,4"/></svg>
+          info@purpdigital.com
+        </a>
+        <a href="tel:+902121234567">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 11a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.61 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+          +90 212 123 45 67
+        </a>
+        <a href="https://instagram.com" target="_blank" rel="noopener noreferrer">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+          Instagram
+        </a>
+        <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+          LinkedIn
+        </a>
+      </div>
+    </div>
+
+    <!-- Alt çizgi: nav + copyright -->
+    <div class="footer-bottom">
+      <p class="footer-copy">© 2026 Purp Digital. Tüm Hakları Saklıdır.</p>
+      <nav aria-label="Footer navigasyonu">
+        <ul class="footer-links">
+          <li><a href="#services">Hizmetler</a></li>
+          <li><a href="#process">Süreç</a></li>
+          <li><a href="#">KVKK</a></li>
+          <li><a href="#">Çerez Politikası</a></li>
+        </ul>
+      </nav>
+    </div>
+  </footer>
+
+  <script>
+    // ── Hamburger / Mobile Menu ──
+    const hamburger = document.querySelector('.hamburger');
+    const mobileMenu = document.getElementById('mobile-menu');
+    const mobileLinks = mobileMenu.querySelectorAll('a');
+
+    function openMenu() {
+      mobileMenu.classList.add('open');
+      hamburger.setAttribute('aria-expanded', 'true');
+      hamburger.setAttribute('aria-label', 'Navigasyon menüsünü kapat');
+      document.body.style.overflow = 'hidden';
+    }
+    function closeMenu() {
+      mobileMenu.classList.remove('open');
+      hamburger.setAttribute('aria-expanded', 'false');
+      hamburger.setAttribute('aria-label', 'Navigasyon menüsünü aç');
+      document.body.style.overflow = '';
+    }
+    hamburger.addEventListener('click', () => {
+      mobileMenu.classList.contains('open') ? closeMenu() : openMenu();
+    });
+    mobileLinks.forEach(link => link.addEventListener('click', closeMenu));
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeMenu(); });
+
+    // ── Scroll Reveal (Intersection Observer) ──
+    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    if (!prefersReduced) {
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+            observer.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.12 });
+
+      document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+    } else {
+      document.querySelectorAll('.reveal').forEach(el => el.classList.add('visible'));
+    }
+
+
+    // ── Magnetic Buttons (MagneticButtons / Cuberto ilham) ──
+    if (!prefersReduced) {
+      const lerp = (a, b, n) => (1 - n) * a + n * b;
+
+      document.querySelectorAll('.magnetic').forEach(btn => {
+        const inner = btn.querySelector('.btn-inner');
+        let rect, cx = 0, cy = 0, ix = 0, iy = 0, tx = 0, ty = 0, itx = 0, ity = 0;
+
+        function updateRect() { rect = btn.getBoundingClientRect(); }
+        updateRect();
+        window.addEventListener('resize', updateRect);
+
+        btn.addEventListener('mousemove', e => {
+          updateRect();
+          const relX = e.clientX - rect.left - rect.width  / 2;
+          const relY = e.clientY - rect.top  - rect.height / 2;
+          tx  = relX * 0.32;
+          ty  = relY * 0.32;
+          itx = relX * -0.14;
+          ity = relY * -0.14;
+        });
+
+        btn.addEventListener('mouseleave', () => {
+          tx = 0; ty = 0; itx = 0; ity = 0;
+        });
+
+        (function animate() {
+          cx  = lerp(cx,  tx,  0.1);
+          cy  = lerp(cy,  ty,  0.1);
+          ix  = lerp(ix,  itx, 0.1);
+          iy  = lerp(iy,  ity, 0.1);
+          btn.style.transform   = `translate(${cx}px, ${cy}px)`;
+          if (inner) inner.style.transform = `translate(${ix}px, ${iy}px)`;
+          requestAnimationFrame(animate);
+        })();
+      });
+    }
+  </script>
+</body>
+</html>
