@@ -51,7 +51,11 @@
         transition-duration: 0.01ms !important;
         scroll-behavior: auto !important;
       }
-      .reveal { opacity: 1 !important; transform: none !important; }
+      .reveal, .reveal-fade, .reveal-scale, .reveal-left, .reveal-right {
+        opacity: 1 !important;
+        transform: none !important;
+        transition: none !important;
+      }
     }
 
     /* ─── Focus ─── */
@@ -76,20 +80,75 @@
     }
     .skip-link:focus { top: 0; }
 
-    /* ─── Reveal animation ─── */
+    /* ─── Reveal — Apple-style spring easing ─── */
+    :root {
+      --spring: cubic-bezier(0.22, 1, 0.36, 1);
+      --spring-soft: cubic-bezier(0.34, 1.06, 0.64, 1);
+    }
+
+    /* Temel reveal — yukarı kayma */
     .reveal {
       opacity: 0;
-      transform: translateY(28px);
-      transition: opacity 0.75s var(--ease-out), transform 0.75s var(--ease-out);
+      transform: translateY(48px);
+      transition:
+        opacity  0.9s var(--spring),
+        transform 0.9s var(--spring);
+      transition-delay: var(--d, 0s);
+      will-change: opacity, transform;
     }
     .reveal.visible {
       opacity: 1;
-      transform: none;
+      transform: translateY(0);
     }
-    .reveal-delay-1 { transition-delay: 0.08s; }
-    .reveal-delay-2 { transition-delay: 0.16s; }
-    .reveal-delay-3 { transition-delay: 0.24s; }
-    .reveal-delay-4 { transition-delay: 0.32s; }
+
+    /* Varyantlar */
+    .reveal-fade {
+      opacity: 0;
+      transform: none;
+      transition: opacity 1.1s var(--spring);
+      transition-delay: var(--d, 0s);
+    }
+    .reveal-fade.visible { opacity: 1; }
+
+    .reveal-scale {
+      opacity: 0;
+      transform: scale(0.93) translateY(20px);
+      transition:
+        opacity  0.85s var(--spring),
+        transform 0.85s var(--spring-soft);
+      transition-delay: var(--d, 0s);
+      will-change: opacity, transform;
+    }
+    .reveal-scale.visible {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+    }
+
+    .reveal-left {
+      opacity: 0;
+      transform: translateX(-36px);
+      transition:
+        opacity  0.9s var(--spring),
+        transform 0.9s var(--spring);
+      transition-delay: var(--d, 0s);
+    }
+    .reveal-left.visible { opacity: 1; transform: translateX(0); }
+
+    .reveal-right {
+      opacity: 0;
+      transform: translateX(36px);
+      transition:
+        opacity  0.9s var(--spring),
+        transform 0.9s var(--spring);
+      transition-delay: var(--d, 0s);
+    }
+    .reveal-right.visible { opacity: 1; transform: translateX(0); }
+
+    /* Eski delay classları — artık --d ile yönetilir ama geriye dönük uyumluluk */
+    .reveal-delay-1 { --d: 0.10s; }
+    .reveal-delay-2 { --d: 0.20s; }
+    .reveal-delay-3 { --d: 0.32s; }
+    .reveal-delay-4 { --d: 0.44s; }
 
     /* ─── Ambient glow ─── */
     .glow {
@@ -123,11 +182,21 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      background: rgba(11, 0, 19, 0.72);
-      -webkit-backdrop-filter: blur(16px);
-      backdrop-filter: blur(16px);
-      border-bottom: 1px solid rgba(255,255,255,0.05);
-      transition: background var(--transition);
+      background: rgba(10, 10, 10, 0);
+      -webkit-backdrop-filter: blur(0px) saturate(1);
+      backdrop-filter: blur(0px) saturate(1);
+      border-bottom: 1px solid rgba(255,255,255,0);
+      transition:
+        background 0.5s var(--spring),
+        backdrop-filter 0.5s var(--spring),
+        -webkit-backdrop-filter 0.5s var(--spring),
+        border-color 0.5s var(--spring);
+    }
+    .navbar.scrolled {
+      background: rgba(10, 10, 10, 0.78);
+      -webkit-backdrop-filter: blur(20px) saturate(1.6);
+      backdrop-filter: blur(20px) saturate(1.6);
+      border-bottom: 1px solid rgba(255,255,255,0.07);
     }
 
     /* Logo */
@@ -315,6 +384,7 @@
       position: relative;
       z-index: 1;
       max-width: 800px;
+      will-change: transform;
     }
     .badge {
       display: inline-flex;
@@ -960,26 +1030,26 @@
       <div class="glow glow-2" aria-hidden="true"></div>
 
       <div class="hero-inner">
-        <p class="badge reveal"><span class="badge-dot" aria-hidden="true"></span> Next-Gen Dijital Ajans</p>
+        <p class="badge reveal-fade" style="--d:0.1s"><span class="badge-dot" aria-hidden="true"></span> Next-Gen Dijital Ajans</p>
 
-        <h1 class="reveal reveal-delay-1">
+        <h1 class="reveal" style="--d:0.22s">
           Fikirleri Estetiğe,<br>
           Süreçleri <span class="accent-scramble" aria-label="Geleceğe">Geleceğe</span><br>
           Dönüştürür.
         </h1>
 
-        <p class="hero-desc reveal reveal-delay-2">
+        <p class="hero-desc reveal" style="--d:0.38s">
           Purp Digital olarak kurumsal kimliğinizi baştan yaratıyor, geleceğin
           web teknolojilerini yapay zeka otomasyonları ve kusursuz sosyal medya
           yönetimiyle harmanlıyoruz.
         </p>
 
-        <div class="hero-cta reveal reveal-delay-3">
+        <div class="hero-cta reveal" style="--d:0.52s">
           <a href="#services" class="btn btn-solid magnetic"><span class="btn-inner">Hizmetleri Keşfet</span></a>
           <a href="#contact" class="btn btn-outline magnetic"><span class="btn-inner">Proje Başlat ↗</span></a>
         </div>
 
-        <div class="stats-strip reveal reveal-delay-4" aria-label="İstatistikler">
+        <div class="stats-strip reveal" style="--d:0.68s" aria-label="İstatistikler">
           <div class="stat-item">
             <span class="stat-num">80<span>+</span></span>
             <span class="stat-label">Tamamlanan Proje</span>
@@ -999,18 +1069,18 @@
 
     <!-- Services -->
     <section class="services" id="services" aria-label="Hizmetlerimiz">
-      <p class="section-label reveal">Neler Yapıyoruz</p>
-      <h2 class="section-title reveal reveal-delay-1">
+      <p class="section-label reveal-fade" style="--d:0s">Neler Yapıyoruz</p>
+      <h2 class="section-title reveal" style="--d:0.1s">
         Sınırları Zorlayan<br>Dijital Çözümler
       </h2>
-      <p class="section-sub reveal reveal-delay-2">
+      <p class="section-sub reveal-fade" style="--d:0.22s">
         Markanızı dijital dünyada kalıcı kılmak için strateji, yaratıcılık ve
         yapay zekayı bir araya getiriyoruz.
       </p>
 
       <div class="services-grid">
         <!-- Web Tasarım -->
-        <article class="service-card reveal">
+        <article class="service-card reveal-scale" style="--d:0s">
           <div class="service-icon" aria-hidden="true">
             <svg viewBox="0 0 24 24" aria-hidden="true">
               <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
@@ -1024,7 +1094,7 @@
         </article>
 
         <!-- Yapay Zeka -->
-        <article class="service-card reveal reveal-delay-1">
+        <article class="service-card reveal-scale" style="--d:0.12s">
           <div class="service-icon" aria-hidden="true">
             <svg viewBox="0 0 24 24" aria-hidden="true">
               <circle cx="12" cy="12" r="3"/>
@@ -1037,7 +1107,7 @@
         </article>
 
         <!-- Sosyal Medya -->
-        <article class="service-card reveal reveal-delay-2">
+        <article class="service-card reveal-scale" style="--d:0.22s">
           <div class="service-icon" aria-hidden="true">
             <svg viewBox="0 0 24 24" aria-hidden="true">
               <path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"/>
@@ -1049,7 +1119,7 @@
         </article>
 
         <!-- Kurumsal Kimlik -->
-        <article class="service-card reveal reveal-delay-3">
+        <article class="service-card reveal-scale" style="--d:0.32s">
           <div class="service-icon" aria-hidden="true">
             <svg viewBox="0 0 24 24" aria-hidden="true">
               <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
@@ -1071,15 +1141,15 @@
         <img src="çalışma.png" alt="">
       </div>
 
-      <p class="section-label reveal">Çalışma Sürecimiz</p>
-      <h2 class="section-title reveal reveal-delay-1">4 Adımda<br>Hayalinizdeki Proje</h2>
-      <p class="section-sub reveal reveal-delay-2">
+      <p class="section-label reveal-fade" style="--d:0s">Çalışma Sürecimiz</p>
+      <h2 class="section-title reveal" style="--d:0.1s">4 Adımda<br>Hayalinizdeki Proje</h2>
+      <p class="section-sub reveal-fade" style="--d:0.22s">
         Şeffaf, hızlı ve sonuç odaklı bir süreçle projenizi hayata geçiriyoruz.
       </p>
 
       <div class="process-grid" role="list">
 
-        <div class="process-item reveal" role="listitem">
+        <div class="process-item reveal-scale" style="--d:0s" role="listitem">
           <div class="process-icon" aria-hidden="true">
             <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
           </div>
@@ -1088,7 +1158,7 @@
           <p>İhtiyaçlarınızı, hedeflerinizi ve markanızın ruhunu derinlemesine anlamak için kapsamlı bir brifing süreci yürütüyoruz.</p>
         </div>
 
-        <div class="process-item reveal reveal-delay-1" role="listitem">
+        <div class="process-item reveal-scale" style="--d:0.14s" role="listitem">
           <div class="process-icon" aria-hidden="true">
             <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
           </div>
@@ -1097,7 +1167,7 @@
           <p>Veriye dayalı stratejiler ve yaratıcı konseptlerle projenizin yol haritasını çiziyoruz.</p>
         </div>
 
-        <div class="process-item reveal reveal-delay-2" role="listitem">
+        <div class="process-item reveal-scale" style="--d:0.26s" role="listitem">
           <div class="process-icon" aria-hidden="true">
             <svg viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
           </div>
@@ -1106,7 +1176,7 @@
           <p>Piksel mükemmeliyeti ve performansı ön planda tutarak projenizi en güncel teknolojilerle hayata geçiriyor, her detayı titizlikle uyguluyoruz.</p>
         </div>
 
-        <div class="process-item reveal reveal-delay-3" role="listitem">
+        <div class="process-item reveal-scale" style="--d:0.38s" role="listitem">
           <div class="process-icon" aria-hidden="true">
             <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
           </div>
@@ -1122,13 +1192,13 @@
     <section class="cta-section" id="contact" aria-label="İletişim">
       <div class="glow" aria-hidden="true"></div>
       <div class="cta-inner">
-        <p class="section-label reveal">Haydi Başlayalım</p>
-        <h2 class="reveal reveal-delay-1">Sanal'ı Gerçeğe<br><span>Dönüştürelim</span></h2>
-        <p class="reveal reveal-delay-2">
+        <p class="section-label reveal-fade" style="--d:0s">Haydi Başlayalım</p>
+        <h2 class="reveal" style="--d:0.12s">Sanal'ı Gerçeğe<br><span>Dönüştürelim</span></h2>
+        <p class="reveal-fade" style="--d:0.26s">
           Projeniz için hazır mısınız? Ücretsiz danışmanlık görüşmesi için
           bize ulaşın, hedeflerinizi birlikte konuşalım.
         </p>
-        <div class="cta-group reveal reveal-delay-3">
+        <div class="cta-group reveal" style="--d:0.38s">
           <a href="mailto:hello@purp.digital" class="btn btn-gold magnetic">
             <span class="btn-inner">E-posta Gönder ↗</span>
           </a>
@@ -1136,7 +1206,7 @@
             <span class="btn-inner">Hemen Ara</span>
           </a>
         </div>
-        <p class="cta-email reveal reveal-delay-4">
+        <p class="cta-email reveal-fade" style="--d:0.5s">
           veya doğrudan yazın:
           <a href="mailto:hello@purp.digital">hello@purp.digital</a>
         </p>
@@ -1215,22 +1285,75 @@
     mobileLinks.forEach(link => link.addEventListener('click', closeMenu));
     document.addEventListener('keydown', e => { if (e.key === 'Escape') closeMenu(); });
 
-    // ── Scroll Reveal (Intersection Observer) ──
+    // ── Apple-style Scroll System ──
     const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+    const REVEAL_SELECTORS = '.reveal, .reveal-fade, .reveal-scale, .reveal-left, .reveal-right';
+
     if (!prefersReduced) {
-      const observer = new IntersectionObserver((entries) => {
+      // Scroll reveal — threshold düşük tutuldu ki erken tetiklensin, Apple gibi
+      const revealObserver = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
           if (entry.isIntersecting) {
             entry.target.classList.add('visible');
-            observer.unobserve(entry.target);
+            revealObserver.unobserve(entry.target);
           }
         });
-      }, { threshold: 0.12 });
+      }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
 
-      document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+      document.querySelectorAll(REVEAL_SELECTORS).forEach(el => revealObserver.observe(el));
+
+      // ── Hero parallax — Apple homepage tarzı çok yumuşak kayma ──
+      const heroInner = document.querySelector('.hero-inner');
+      const heroBg    = document.querySelector('.hero-bg img');
+      let heroTicking = false;
+      window.addEventListener('scroll', () => {
+        if (heroTicking) return;
+        heroTicking = true;
+        requestAnimationFrame(() => {
+          const y = window.scrollY;
+          if (heroInner) heroInner.style.transform = `translateY(${y * 0.18}px)`;
+          if (heroBg)    heroBg.style.transform    = `translateY(${y * 0.08}px) scale(1.08)`;
+          heroTicking = false;
+        });
+      }, { passive: true });
+
+      // ── Stat counter animasyonu ──
+      const statNums = document.querySelectorAll('.stat-num');
+      const counterObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (!entry.isIntersecting) return;
+          const el     = entry.target;
+          const text   = el.textContent;
+          const suffix = text.replace(/[0-9]/g, '');
+          const target = parseInt(text) || 0;
+          if (target === 0) return;
+          counterObserver.unobserve(el);
+          let start = 0;
+          const duration = 1400;
+          const startTime = performance.now();
+          const ease = t => 1 - Math.pow(1 - t, 4); // ease-out quart
+          (function tick(now) {
+            const elapsed = now - startTime;
+            const progress = Math.min(elapsed / duration, 1);
+            el.textContent = Math.round(ease(progress) * target) + suffix;
+            if (progress < 1) requestAnimationFrame(tick);
+          })(performance.now());
+        });
+      }, { threshold: 0.6 });
+
+      statNums.forEach(el => counterObserver.observe(el));
+
+      // ── Navbar scroll blur — Apple navigation bar efekti ──
+      const navbar = document.querySelector('.navbar');
+      if (navbar) {
+        window.addEventListener('scroll', () => {
+          navbar.classList.toggle('scrolled', window.scrollY > 60);
+        }, { passive: true });
+      }
+
     } else {
-      document.querySelectorAll('.reveal').forEach(el => el.classList.add('visible'));
+      document.querySelectorAll(REVEAL_SELECTORS).forEach(el => el.classList.add('visible'));
     }
 
 
