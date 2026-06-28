@@ -212,52 +212,104 @@
       display: block;
     }
 
-    /* ─── Pill Nav Bar ─── */
+    /* ═══════════════════════════════════════
+       SEGMENTED CONTROL — Premium Pill Nav
+    ═══════════════════════════════════════ */
     .nav-pill-bar {
       position: relative;
       display: flex;
       align-items: center;
       list-style: none;
-      background: rgba(255,255,255,0.06);
-      border: 1px solid rgba(255,255,255,0.12);
+      /* Frosted glass — koyu slate/teal */
+      background:
+        linear-gradient(
+          145deg,
+          rgba(22, 32, 42, 0.82) 0%,
+          rgba(14, 24, 32, 0.88) 100%
+        );
+      -webkit-backdrop-filter: blur(18px) saturate(1.5);
+      backdrop-filter: blur(18px) saturate(1.5);
+      /* Çok ince kenarlık — cam kenarı illüzyonu */
+      border: 1px solid rgba(255,255,255,0.09);
       border-radius: 100px;
       padding: 5px;
-      gap: 2px;
+      gap: 1px;
+      /* Dış glow + iç gölge derinlik katmanları */
+      box-shadow:
+        0 0 0 1px rgba(0,0,0,0.35),
+        0 4px 20px rgba(0,0,0,0.45),
+        0 1px 3px rgba(0,0,0,0.3),
+        inset 0 1px 0 rgba(255,255,255,0.07),
+        inset 0 -1px 0 rgba(0,0,0,0.25);
     }
+
+    /* Kayan aktif gösterge */
     .nav-pill-indicator {
       position: absolute;
       top: 5px;
       left: 5px;
       height: calc(100% - 10px);
       width: 80px;
-      background: #ffffff;
       border-radius: 100px;
       pointer-events: none;
       z-index: 0;
+      /* Aktif sekme arka planı — gradient + derinlik */
+      background: linear-gradient(
+        135deg,
+        rgba(255,255,255,0.18) 0%,
+        rgba(255,255,255,0.10) 50%,
+        rgba(255,255,255,0.06) 100%
+      );
+      border: 1px solid rgba(255,255,255,0.16);
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.22),
+        inset 0 -1px 0 rgba(0,0,0,0.15),
+        0 2px 12px rgba(0,0,0,0.35),
+        0 0 0 0.5px rgba(255,255,255,0.06);
+      /* Spring animasyon */
       transition:
-        left   0.45s cubic-bezier(0.22, 1, 0.36, 1),
-        width  0.45s cubic-bezier(0.22, 1, 0.36, 1),
-        opacity 0.3s ease;
+        left      0.48s cubic-bezier(0.22, 1, 0.36, 1),
+        width     0.48s cubic-bezier(0.22, 1, 0.36, 1),
+        opacity   0.25s ease,
+        transform 0.15s ease;
       opacity: 0;
     }
+
     .nav-pill-bar li {
       position: relative;
       z-index: 1;
     }
+
+    /* Sekme linkleri */
     .nav-pill-bar a {
       display: block;
-      padding: 0.38rem 1.05rem;
+      padding: 0.4rem 1.1rem;
       border-radius: 100px;
       font-size: 0.8125rem;
       font-weight: 500;
-      color: rgba(255,255,255,0.65);
+      letter-spacing: 0.01em;
+      color: rgba(255,255,255,0.42);
       text-decoration: none;
       white-space: nowrap;
-      transition: color 0.3s ease;
       cursor: pointer;
+      transition:
+        color    0.28s ease,
+        opacity  0.28s ease;
+      /* Text shadow — derinlik */
+      text-shadow: 0 1px 2px rgba(0,0,0,0.4);
     }
-    .nav-pill-bar a:hover { color: rgba(255,255,255,0.9); }
-    .nav-pill-bar a.pill-active { color: #000; font-weight: 600; }
+
+    /* Hover — yumuşak belirginleşme */
+    .nav-pill-bar a:hover {
+      color: rgba(255,255,255,0.78);
+    }
+
+    /* Aktif sekme — tam beyaz, bold */
+    .nav-pill-bar a.pill-active {
+      color: #ffffff;
+      font-weight: 600;
+      text-shadow: 0 0 12px rgba(255,255,255,0.35), 0 1px 2px rgba(0,0,0,0.3);
+    }
 
     /* CTA button */
     .btn {
@@ -1418,9 +1470,19 @@
 
       spySections.forEach(s => spyObserver.observe(s));
 
-      // Pill'i tıklama anında da güncelle
+      // Tıklama anında pill güncelle + micro press efekti
       pillLinks.forEach(link => {
         link.addEventListener('click', () => movePill(link));
+
+        link.addEventListener('mousedown', () => {
+          pillIndicator.style.transform = 'scale(0.97)';
+        });
+        link.addEventListener('mouseup', () => {
+          pillIndicator.style.transform = 'scale(1)';
+        });
+        link.addEventListener('mouseleave', () => {
+          pillIndicator.style.transform = 'scale(1)';
+        });
       });
 
     } else {
