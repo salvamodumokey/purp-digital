@@ -212,21 +212,52 @@
       display: block;
     }
 
-    /* Desktop nav links */
-    .nav-links {
+    /* ─── Pill Nav Bar ─── */
+    .nav-pill-bar {
+      position: relative;
       display: flex;
+      align-items: center;
       list-style: none;
-      gap: 2.5rem;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 100px;
+      padding: 5px;
+      gap: 2px;
     }
-    .nav-links a {
-      color: var(--white-60);
-      text-decoration: none;
-      font-size: 0.875rem;
+    .nav-pill-indicator {
+      position: absolute;
+      top: 5px;
+      left: 5px;
+      height: calc(100% - 10px);
+      width: 80px;
+      background: #ffffff;
+      border-radius: 100px;
+      pointer-events: none;
+      z-index: 0;
+      transition:
+        left   0.45s cubic-bezier(0.22, 1, 0.36, 1),
+        width  0.45s cubic-bezier(0.22, 1, 0.36, 1),
+        opacity 0.3s ease;
+      opacity: 0;
+    }
+    .nav-pill-bar li {
+      position: relative;
+      z-index: 1;
+    }
+    .nav-pill-bar a {
+      display: block;
+      padding: 0.38rem 1.05rem;
+      border-radius: 100px;
+      font-size: 0.8125rem;
       font-weight: 500;
-      transition: color var(--transition);
+      color: rgba(255,255,255,0.65);
+      text-decoration: none;
+      white-space: nowrap;
+      transition: color 0.3s ease;
       cursor: pointer;
     }
-    .nav-links a:hover { color: var(--white); }
+    .nav-pill-bar a:hover { color: rgba(255,255,255,0.9); }
+    .nav-pill-bar a.pill-active { color: #000; font-weight: 600; }
 
     /* CTA button */
     .btn {
@@ -346,7 +377,7 @@
 
     /* Responsive nav */
     @media (max-width: 768px) {
-      .nav-links, .nav-cta { display: none; }
+      .nav-pill-bar, .nav-cta { display: none; }
       .hamburger { display: flex; }
     }
 
@@ -984,10 +1015,11 @@
     </a>
 
     <nav aria-label="Ana navigasyon">
-      <ul class="nav-links">
-        <li><a href="#services">Hizmetler</a></li>
-        <li><a href="#process">Süreç</a></li>
-        <li><a href="#contact">İletişim</a></li>
+      <ul class="nav-pill-bar" id="nav-pill-bar">
+        <div class="nav-pill-indicator" id="nav-pill-indicator" aria-hidden="true"></div>
+        <li><a href="#services" data-section="services">Hizmetler</a></li>
+        <li><a href="#process"  data-section="process">Süreç</a></li>
+        <li><a href="#contact"  data-section="contact">İletişim</a></li>
       </ul>
     </nav>
 
@@ -1351,6 +1383,45 @@
           navbar.classList.toggle('scrolled', window.scrollY > 60);
         }, { passive: true });
       }
+
+      // ── Pill Nav — scroll spy + kayan gösterge ──
+      const pillBar       = document.getElementById('nav-pill-bar');
+      const pillIndicator = document.getElementById('nav-pill-indicator');
+      const pillLinks     = document.querySelectorAll('.nav-pill-bar a[data-section]');
+
+      function movePill(link) {
+        if (!link || !pillBar || !pillIndicator) return;
+        pillLinks.forEach(a => a.classList.remove('pill-active'));
+        link.classList.add('pill-active');
+        const barRect  = pillBar.getBoundingClientRect();
+        const liRect   = link.parentElement.getBoundingClientRect();
+        pillIndicator.style.opacity = '1';
+        pillIndicator.style.left  = (liRect.left - barRect.left) + 'px';
+        pillIndicator.style.width = liRect.width + 'px';
+      }
+
+      // Scroll spy: hangi section görünürde?
+      const spySections = ['services', 'process', 'contact']
+        .map(id => document.getElementById(id))
+        .filter(Boolean);
+
+      const spyObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (!entry.isIntersecting) return;
+          const link = document.querySelector(`.nav-pill-bar a[data-section="${entry.target.id}"]`);
+          if (link) movePill(link);
+        });
+      }, {
+        threshold: 0,
+        rootMargin: '-30% 0px -60% 0px'
+      });
+
+      spySections.forEach(s => spyObserver.observe(s));
+
+      // Pill'i tıklama anında da güncelle
+      pillLinks.forEach(link => {
+        link.addEventListener('click', () => movePill(link));
+      });
 
     } else {
       document.querySelectorAll(REVEAL_SELECTORS).forEach(el => el.classList.add('visible'));
