@@ -1432,11 +1432,15 @@
       const pillLinks     = document.querySelectorAll('.nav-pill-bar a[data-section]');
 
       function movePill(link) {
-        if (!link || !pillBar || !pillIndicator) return;
+        if (!pillBar || !pillIndicator) return;
         pillLinks.forEach(a => a.classList.remove('pill-active'));
+        if (!link) {
+          pillIndicator.style.opacity = '0';
+          return;
+        }
         link.classList.add('pill-active');
-        const barRect  = pillBar.getBoundingClientRect();
-        const liRect   = link.parentElement.getBoundingClientRect();
+        const barRect = pillBar.getBoundingClientRect();
+        const liRect  = link.parentElement.getBoundingClientRect();
         pillIndicator.style.opacity = '1';
         pillIndicator.style.left  = (liRect.left - barRect.left) + 'px';
         pillIndicator.style.width = liRect.width + 'px';
@@ -1446,6 +1450,9 @@
       const spySections = ['services', 'process', 'contact']
         .map(id => document.getElementById(id))
         .filter(Boolean);
+
+      // Hero section'ı da izle — hero görünürde ise pill'i sıfırla
+      const heroSection = document.querySelector('.hero');
 
       const spyObserver = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
@@ -1459,6 +1466,13 @@
       });
 
       spySections.forEach(s => spyObserver.observe(s));
+
+      // Hero görünürde → hiçbiri aktif değil
+      const heroObserver = new IntersectionObserver((entries) => {
+        if (entries[0].isIntersecting) movePill(null);
+      }, { threshold: 0.15 });
+
+      if (heroSection) heroObserver.observe(heroSection);
 
       // Tıklama anında pill güncelle + micro press efekti
       pillLinks.forEach(link => {
